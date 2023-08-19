@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { Product } from '../models/product';
+import { authenticate, authorize } from '../auth/authMiddleware';
 
 const router = Router();
 
 let products: Product[] = [];
 
 // Create
-router.post('/', (req, res) => {
+router.post('/', authenticate, authorize('admin'), (req, res) => {
   const product: Product = {
     id: Date.now(),
     ...req.body
@@ -16,7 +17,7 @@ router.post('/', (req, res) => {
 });
 
 // Read all
-router.get('/', (req, res) => {
+router.get('/', authenticate, authorize('admin'), (req, res) => {
   res.json(products);
 });
 
@@ -28,7 +29,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticate, authorize('admin'), (req, res) => {
   const index = products.findIndex(u => u.id === +req.params.id);
   if (index !== -1) {
     products[index] = { id: +req.params.id, ...req.body };
@@ -39,7 +40,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
   products = products.filter(u => u.id !== +req.params.id);
   res.status(204).send();
 });

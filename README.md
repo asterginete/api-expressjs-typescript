@@ -1,6 +1,6 @@
 # Express.js & TypeScript API
 
-This project is a simple backend API built with Express.js and TypeScript. It provides CRUD operations for two entities: `users` and `products`.
+This project is a simple backend API built with Express.js and TypeScript. It provides CRUD operations for two entities: `users` and `products`, and includes authentication and authorization features.
 
 ## Table of Contents
 
@@ -9,6 +9,7 @@ This project is a simple backend API built with Express.js and TypeScript. It pr
   - [Installation](#installation)
 - [Project Structure](#project-structure)
 - [API Endpoints](#api-endpoints)
+- [Authentication and Authorization](#authentication-and-authorization)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -47,35 +48,45 @@ The server will start on port 3000.
 
 ```
 /src
+  /auth
+    - authMiddleware.ts
+    - authService.ts
   /models
-    - user.tsx       # User model definition
-    - product.tsx    # Product model definition
+    - user.ts
+    - product.ts
   /routes
-    - userRoutes.tsx     # Routes for user CRUD operations
-    - productRoutes.tsx  # Routes for product CRUD operations
-  - index.tsx       # Main application entry point
+    - userRoutes.ts
+    - productRoutes.ts
+  - index.ts
+/types
+  - types.d.ts
 ```
 
 ### `models`
 
-- `user.tsx`: Defines the `User` interface with properties `id`, `name`, and `email`.
-- `product.tsx`: Defines the `Product` interface with properties `id`, `name`, and `price`.
+- `user.ts`: Defines the `User` interface with properties `id`, `name`, `email`, `password`, and `role`.
+- `product.ts`: Defines the `Product` interface with properties `id`, `name`, and `price`.
+
+### `auth`
+
+- `authService.ts`: Contains utility functions for generating and verifying JWT tokens, as well as hashing and comparing passwords.
+- `authMiddleware.ts`: Middleware functions for authenticating and authorizing users.
 
 ### `routes`
 
-- `userRoutes.tsx`: Contains all the routes related to users. This includes creating a user, reading all users, reading a single user by ID, updating a user by ID, and deleting a user by ID.
-  
-- `productRoutes.tsx`: Similar to `userRoutes.tsx`, but for products.
+- `userRoutes.ts`: Contains routes related to users, including registration and login.
+- `productRoutes.ts`: Contains routes related to products.
 
-### `index.tsx`
+### `types`
 
-This is the main entry point for the application. It sets up the Express server, middleware, and routes.
+- `types.d.ts`: Extends the Express `Request` type to include a `user` property for authentication.
 
 ## API Endpoints
 
 ### Users
 
-- **Create User**: `POST /users`
+- **Register**: `POST /users/register`
+- **Login**: `POST /users/login`
 - **Get All Users**: `GET /users`
 - **Get User by ID**: `GET /users/:id`
 - **Update User by ID**: `PUT /users/:id`
@@ -88,6 +99,12 @@ This is the main entry point for the application. It sets up the Express server,
 - **Get Product by ID**: `GET /products/:id`
 - **Update Product by ID**: `PUT /products/:id`
 - **Delete Product by ID**: `DELETE /products/:id`
+
+## Authentication and Authorization
+
+The API uses JSON Web Tokens (JWT) for authentication. Users can register and log in to receive a token, which must be included in the `Authorization` header for protected routes.
+
+Authorization is role-based, with two roles available: `user` and `admin`. Some routes may require a specific role to access.
 
 ## Contributing
 

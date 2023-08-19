@@ -1,9 +1,35 @@
+import { generateToken, hashPassword, comparePassword } from '../auth/authService';
+import { authenticate, authorize } from '../auth/authMiddleware';
 import { Router } from 'express';
 import { User } from '../models/user';
 
 const router = Router();
 
 let users: User[] = [];
+
+// Register
+router.post('/register', async (req, res) => {
+  const hashedPassword = await hashPassword(req.body.password);
+  const user: User = {
+    id: Date.now(),
+    ...req.body,
+    password: hashedPassword,
+    role: 'user'
+  };
+  users.push(user);
+  res.status(201).json({ message: 'User registered successfully' });
+});
+
+// Login
+router.post('/login', async (req, res) => {
+  const user = users.find(u => u.email === req.body.email);
+  if (user && await comparePassword(req.body.password, user.password)) {
+    const token = generateToken(user.id, user.role);
+    res.json({ token });
+  } else {
+    res.status(401).send('Invalid credentials');
+  }
+});
 
 // Create
 router.post('/', (req, res) => {
@@ -16,7 +42,7 @@ router.post('/', (req, res) => {
 });
 
 // Read all
-router.get('/', (req, res) => {
+router.get('/', authenticate, authorize('admin'), (req, res) => {
   res.json(users);
 });
 
@@ -28,7 +54,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticate, authorize('admin'), (req, res) => {
   const index = users.findIndex(u => u.id === +req.params.id);
   if (index !== -1) {
     users[index] = { id: +req.params.id, ...req.body };
@@ -39,7 +65,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
   users = users.filter(u => u.id !== +req.params.id);
   res.status(204).send();
 });
