@@ -22,22 +22,12 @@ This project is a simple backend API built with Express.js and TypeScript. It pr
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   ```
-
-2. Navigate to the project directory:
-   ```bash
-   cd <project-name>
-   ```
-
-3. Install the dependencies:
+1. Install the dependencies:
    ```bash
    npm install
    ```
 
-4. Run the application:
+2. Run the application:
    ```bash
    npm start
    ```
