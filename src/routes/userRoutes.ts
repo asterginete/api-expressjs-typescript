@@ -1,14 +1,23 @@
-import { generateToken, hashPassword, comparePassword } from '../auth/authService';
-import { authenticate, authorize } from '../auth/authMiddleware';
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
+import { body, validationResult } from 'express-validator';
 import { User } from '../models/user';
+import { generateToken, hashPassword, comparePassword } from '../auth/authService';
 
 const router = Router();
 
 let users: User[] = [];
 
 // Register
-router.post('/register', async (req, res) => {
+router.post('/register', [
+  body('name').notEmpty().withMessage('Name is required'),
+  body('email').isEmail().withMessage('Valid email is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+], async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const hashedPassword = await hashPassword(req.body.password);
   const user: User = {
     id: Date.now(),
@@ -21,7 +30,15 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', [
+  body('email').isEmail().withMessage('Valid email is required'),
+  body('password').notEmpty().withMessage('Password is required'),
+], async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const user = users.find(u => u.email === req.body.email);
   if (user && await comparePassword(req.body.password, user.password)) {
     const token = generateToken(user.id, user.role);
@@ -31,30 +48,20 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Create
-router.post('/', (req, res) => {
-  const user: User = {
-    id: Date.now(),
-    ...req.body
-  };
-  users.push(user);
-  res.status(201).json(user);
-});
-
-// Read all
-router.get('/', authenticate, authorize('admin'), (req, res) => {
+// Read all users
+router.get('/', (req: Request, res: Response) => {
   res.json(users);
 });
 
-// Read one
-router.get('/:id', (req, res) => {
+// Read one user by ID
+router.get('/:id', (req: Request, res: Response) => {
   const user = users.find(u => u.id === +req.params.id);
   if (user) res.json(user);
   else res.status(404).send('User not found');
 });
 
-// Update
-router.put('/:id', authenticate, authorize('admin'), (req, res) => {
+// Update user by ID
+router.put('/:id', (req: Request, res: Response) => {
   const index = users.findIndex(u => u.id === +req.params.id);
   if (index !== -1) {
     users[index] = { id: +req.params.id, ...req.body };
@@ -64,8 +71,8 @@ router.put('/:id', authenticate, authorize('admin'), (req, res) => {
   }
 });
 
-// Delete
-router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
+// Delete user by ID
+router.delete('/:id', (req: Request, res: Response) => {
   users = users.filter(u => u.id !== +req.params.id);
   res.status(204).send();
 });
