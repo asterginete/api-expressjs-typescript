@@ -5,15 +5,21 @@
 |   |-- /config
 |   |   |-- db.ts               # MongoDB connection setup
 |   |   |-- redis.ts            # Redis connection setup
-|   |   `-- elasticsearch.ts    # Elasticsearch connection setup
+|   |   |-- elasticsearch.ts    # Elasticsearch connection setup
+|   |   |-- email.ts            # Email service configuration
+|   |   `-- rateLimit.ts        # Rate limiting configuration
 |   |
 |   |-- /models
 |   |   |-- userSchema.ts       # Mongoose schema for users
-|   |   `-- ...                 # Other database models
+|   |   |-- productSchema.ts    # Mongoose schema for products
+|   |   |-- orderSchema.ts      # Mongoose schema for orders
+|   |   `-- notificationSchema.ts # Mongoose schema for notifications
 |   |
 |   |-- /routes
 |   |   |-- userRoutes.ts       # Routes related to user operations
-|   |   `-- ...                 # Other route files
+|   |   |-- productRoutes.ts    # Routes related to product operations
+|   |   |-- orderRoutes.ts      # Routes related to order operations
+|   |   `-- notificationRoutes.ts # Routes related to notifications
 |   |
 |   |-- /middlewares
 |   |   |-- authMiddleware.ts   # Authentication & Authorization middlewares
@@ -29,11 +35,15 @@
 |   |
 |   |-- /jobs
 |   |   |-- weeklyNewsletter.ts # Cron job for sending weekly newsletters
-|   |   `-- ...                 # Other scheduled tasks
+|   |   |-- backupDatabase.ts   # Cron job for backing up the database
+|   |   |-- cleanUpLogs.ts      # Cron job for cleaning up old logs
+|   |   `-- updateSearchIndex.ts # Cron job for updating Elasticsearch indices
 |   |
 |   |-- /utils
 |   |   |-- logger.ts           # Utility for logging
-|   |   `-- ...                 # Other utilities
+|   |   |-- errorHandler.ts     # Utility for handling errors
+|   |   |-- paginator.ts        # Utility for paginating results
+|   |   `-- validator.ts        # Utility for validating data
 |   |
 |   `-- index.ts                # Main application entry point
 |
@@ -42,4 +52,7 @@
 |-- package.json                 # Project dependencies and scripts
 |-- tsconfig.json                # TypeScript configuration
 |-- .env                         # Environment variables
-`-- ...                          # Other config files like .gitignore, Dockerfile, etc.
+|-- Dockerfile                   # Docker configuration file
+|-- .dockerignore                # Files and directories to ignore in Docker
+|-- .gitignore                   # Files and directories to ignore in Git
+`-- README.md                    # Project documentation

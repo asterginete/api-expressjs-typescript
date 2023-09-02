@@ -46,3 +46,16 @@ router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
 });
 
 export default router;
+import express from 'express';
+import * as productController from '../controllers/productController';
+import authMiddleware from '../middlewares/authMiddleware';
+
+const router = express.Router();
+
+router.post('/', authMiddleware, productController.createProduct);
+router.get('/', productController.getAllProducts);
+router.get('/:productId', productController.getProductById);
+router.put('/:productId', authMiddleware, productController.updateProduct);
+router.delete('/:productId', authMiddleware, productController.deleteProduct);
+
+export default router;
