@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-const SECRET_KEY = 'your-secret-key'; // This should be stored securely, e.g., in environment variables.
+const SECRET_KEY = 'secret-key'; // This should be stored securely, e.g., in environment variables.
 
 export const generateToken = (userId: number, role: string): string => {
   return jwt.sign({ userId, role }, SECRET_KEY, { expiresIn: '1h' });

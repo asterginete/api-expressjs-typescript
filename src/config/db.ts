@@ -3,7 +3,7 @@ import logger from '../utils/logger';
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/your-database-name', {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/database-name', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,

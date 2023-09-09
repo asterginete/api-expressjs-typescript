@@ -1,53 +1,45 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
-import redis from 'redis';
-import { Client as ElasticsearchClient } from 'elasticsearch';
-import dotenv from 'dotenv';
-import userRoutes from './routes/userRoutes';
-import connectDB from './config/db';
+import bodyParser from 'body-parser';
 import rateLimit from './middlewares/rateLimit';
+import errorHandler from './utils/errorHandler';
 import logger from './utils/logger';
 
-dotenv.config();
+import userRoutes from './routes/userRoutes';
+import productRoutes from './routes/productRoutes';
+import orderRoutes from './routes/orderRoutes';
+import notificationRoutes from './routes/notificationRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connect to MongoDB
-connectDB();
-
-// Initialize Redis
-const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST,
-  port: Number(process.env.REDIS_PORT)
-});
-
-redisClient.on('error', (error) => {
-  logger.error(`Redis error: ${error}`);
-});
-
-// Initialize Elasticsearch
-const esClient = new ElasticsearchClient({
-  host: process.env.ELASTICSEARCH_URL,
-  log: 'trace'
+// Database connection
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/myapp', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+}).then(() => {
+  logger.info('Connected to MongoDB');
+}).catch((error) => {
+  logger.error(`Error connecting to MongoDB: ${error.message}`);
 });
 
 // Middlewares
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(rateLimit);
 
 // Routes
 app.use('/api/users', userRoutes);
-// ... other route imports ...
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Error handling middleware
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.stack);
-  res.status(500).send('Something went wrong!');
-});
+app.use(errorHandler.globalErrorHandler);
 
+// Start server
 app.listen(PORT, () => {
-  logger.info(`Server started on http://localhost:${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
 });
 
-export { redisClient, esClient };  // Exporting for other modules if needed
+export default app;

@@ -1,105 +1,119 @@
-# Express.js & TypeScript API
+# API ExpressJS TypeScript
 
-This project is a simple backend API built with Express.js and TypeScript. It provides CRUD operations for two entities: `users` and `products`, and includes authentication and authorization features.
+A comprehensive backend application with various features including user management, product management, order processing, notifications, and more.
 
 ## Table of Contents
 
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Project Structure](#project-structure)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
 - [API Endpoints](#api-endpoints)
-- [Authentication and Authorization](#authentication-and-authorization)
+- [Scheduled Jobs](#scheduled-jobs)
+- [Utilities](#utilities)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Getting Started
+## Features
 
-### Prerequisites
+- **User Management**: Register, login, and manage user profiles.
+- **Product Management**: Add, update, delete, and list products.
+- **Order Processing**: Place and manage orders.
+- **Notifications**: Send and manage notifications.
+- **Search**: Elasticsearch integration for product search.
+- **Database**: MongoDB integration for data persistence.
+- **Caching**: Redis integration for caching.
+- **Email**: Nodemailer integration for sending emails.
+- **Logging**: Comprehensive logging using Winston.
+- **Error Handling**: Global error handler for handling exceptions.
+- **Validation**: Input validation using express-validator.
+- **Rate Limiting**: API rate limiting to prevent abuse.
+- **Authentication & Authorization**: JWT-based authentication and role-based authorization.
+- **Scheduled Jobs**: Cron jobs for tasks like sending weekly newsletters, database backups, and more.
+
+## Prerequisites
 
 - Node.js
-- npm
+- MongoDB
+- Redis
+- Elasticsearch
 
-### Installation
+## Installation
 
-1. Install the dependencies:
-   ```bash
-   npm install
-   ```
+1. Clone the repository:
 
-2. Run the application:
-   ```bash
-   npm start
-   ```
-
-The server will start on port 3000.
-
-## Project Structure
-
-```
-/src
-  /auth
-    - authMiddleware.ts
-    - authService.ts
-  /models
-    - user.ts
-    - product.ts
-  /routes
-    - userRoutes.ts
-    - productRoutes.ts
-  - index.ts
-/types
-  - types.d.ts
+```bash
+git clone https://github.com/asterginete/api-expressjs-typescript.git
+cd api-expressjs-typescript
 ```
 
-### `models`
+2. Install dependencies:
 
-- `user.ts`: Defines the `User` interface with properties `id`, `name`, `email`, `password`, and `role`.
-- `product.ts`: Defines the `Product` interface with properties `id`, `name`, and `price`.
+```bash
+npm install
+```
 
-### `auth`
+3. Create a `.env` file in the root directory and set up your environment variables:
 
-- `authService.ts`: Contains utility functions for generating and verifying JWT tokens, as well as hashing and comparing passwords.
-- `authMiddleware.ts`: Middleware functions for authenticating and authorizing users.
+```env
+MONGODB_URI=mongodb://localhost:27017/myapp
+REDIS_URL=redis://localhost:6379
+ELASTICSEARCH_URI=http://localhost:9200
+JWT_SECRET=jwt_secret
+EMAIL_FROM=no-reply@example.com
+```
 
-### `routes`
+4. Start the services (MongoDB, Redis, Elasticsearch).
 
-- `userRoutes.ts`: Contains routes related to users, including registration and login.
-- `productRoutes.ts`: Contains routes related to products.
+5. Run the application:
 
-### `types`
+```bash
+npm start
+```
 
-- `types.d.ts`: Extends the Express `Request` type to include a `user` property for authentication.
+## Usage
+
+Once the server is running, you can access the API at `http://localhost:3000/api`.
 
 ## API Endpoints
 
-### Users
+- **Users**:
+  - POST `/api/users/register`: Register a new user.
+  - POST `/api/users/login`: Login a user.
+  - GET `/api/users/profile`: Fetch user profile.
+  - PUT `/api/users/profile`: Update user profile.
+  - DELETE `/api/users/:userId`: Delete a user.
 
-- **Register**: `POST /users/register`
-- **Login**: `POST /users/login`
-- **Get All Users**: `GET /users`
-- **Get User by ID**: `GET /users/:id`
-- **Update User by ID**: `PUT /users/:id`
-- **Delete User by ID**: `DELETE /users/:id`
+- **Products**:
+  - POST `/api/products`: Add a new product.
+  - GET `/api/products`: List all products.
+  - GET `/api/products/:productId`: Fetch a specific product.
+  - PUT `/api/products/:productId`: Update a product.
+  - DELETE `/api/products/:productId`: Delete a product.
 
-### Products
+... (similarly for orders and notifications)
 
-- **Create Product**: `POST /products`
-- **Get All Products**: `GET /products`
-- **Get Product by ID**: `GET /products/:id`
-- **Update Product by ID**: `PUT /products/:id`
-- **Delete Product by ID**: `DELETE /products/:id`
+## Scheduled Jobs
 
-## Authentication and Authorization
+- **Weekly Newsletter**: Sends a newsletter every Sunday at 9 AM.
+- **Database Backup**: Backs up the database every day at 2 AM.
+- **Clean Up Logs**: Cleans up log files every month on the 1st at 3 AM.
+- **Update Search Index**: Updates the Elasticsearch index every day at 4 AM.
 
-The API uses JSON Web Tokens (JWT) for authentication. Users can register and log in to receive a token, which must be included in the `Authorization` header for protected routes.
+## Utilities
 
-Authorization is role-based, with two roles available: `user` and `admin`. Some routes may require a specific role to access.
+- **Logger**: Provides comprehensive logging for the application.
+- **Error Handler**: Handles exceptions and sends appropriate responses.
+- **Validator**: Validates input data for API requests.
+- **Paginator**: Provides pagination utilities for listing endpoints.
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes.
+4. Submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the ISC License.

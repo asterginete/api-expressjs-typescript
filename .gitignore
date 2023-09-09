@@ -1,1 +1,33 @@
-node_modules
+node_modules# Node.js related
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Build output
+dist/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# Database backups
+backups/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.sublime*
+
+# OS generated
+.DS_Store
+Thumbs.db
